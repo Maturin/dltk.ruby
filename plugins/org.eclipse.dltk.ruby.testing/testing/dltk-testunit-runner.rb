@@ -17,6 +17,7 @@ module DLTK
 
 			# Notification that a test run has ended.
 			# TEST_RUN_END + elapsedTime.toString().
+
 			TEST_RUN_END   = "%RUNTIME"
 
 			# Notification about a test inside the test suite.
@@ -249,7 +250,13 @@ at_exit do
 		if port != 0
 			path = ENV[DLTK::TestUnit::EnvVars::PATH]
 			autoRunner = Test::Unit::AutoRunner.new(path != nil)
-			autoRunner.output_level = Test::Unit::UI::SILENT
+
+      if RUBY_VERSION >= "1.9"
+        autoRunner.runner_options[:output_level] = Test::Unit::UI::Console::OutputLevel::SILENT
+      else
+			  autoRunner.output_level = Test::Unit::UI::SILENT
+      end
+
 			autoRunner.base = path if path
 			# ssanders - Support non-standard test filenames (e.g. Rails)
 			autoRunner.pattern = [/\b.*_test\.rb\Z/m]
